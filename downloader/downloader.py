@@ -16,17 +16,19 @@ def file_downloader(url, data_path, ym, ymd, current_time, set_time):
 
     file_list = webpage.xpath('//a[contains(@href, "grb2")]//text()')
 
-
     for file in file_list:
-        total_files = len(file_list)
-        download_url = url_full + file
-        print('Start downloading file ' + str(file_list.index(file) + 1) + '/' + str(total_files), download_url)
-
-        #wget download and show the download progress bar
         if current_time == set_time:
+            total_files = len(file_list)
+            download_url = url_full + file
+            print('Start downloading file ' + str(file_list.index(file) + 1) + '/' + str(total_files), download_url)
+
+            #wget download and show the download progress bar
+
             result = wget.download(download_url, data_path + '/' + file)
 
             print(' === Result:', result)
+
+
 
 
 
