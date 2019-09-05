@@ -1,22 +1,29 @@
 from osgeo import gdal
 import numpy as np
+import json
 
-def grab_grb2_data(path, band_no):
+def grab_grb2_data(path, band_name):
     # Open gdal data
     data_set = gdal.Open(path, gdal.GA_ReadOnly)
-    total_bands = data_set.RasterCount
-    print("Number of bands:", total_bands)
 
-    band = data_set.GetRasterBand(band_no)
-    data_array = band.ReadAsArray()
+    # Read data size
+    width = data_set.RasterXSize
+    height = data_set.RasterYSize
+    print("Data size", width, height)
 
+    # Geo transform
+    geo_transform = data_set.GetGeoTransform()
     arr_list = []
+    # Get data band
+    for band in range(data_set.RasterCount):
+        band += 1
+        band_data = data_set.GetRasterBand(band)
 
-    for row in data_array:
-        for value in row:
-            arr_list.append(value)
+        meta_data = band_data.GetMetadata()
+        print(str(meta_data))
 
-    print('Band:', str(band_no))
-    print('Band Max', str(np.max(arr_list)))
-    print('Band Min', str(np.min(arr_list)))
-    print('Count:', str(len(arr_list)))
+def grab_data(path):
+    data_set = gdal.Open(path, gdal.GA_ReadOnly)
+    print(data_set.GetMetadata())
+
+
