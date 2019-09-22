@@ -1,32 +1,52 @@
 import requests
 from lxml import html
 import wget
-import schedule
+import os
+from datetime import timedelta, date
 import time
-# downloader is a function for downloading grib2 data from this url
-# https://nomads.ncdc.noaa.gov/data/gfs4/
-# for example download data at August 1, 2019, the format will be
-# ym = 201908, ymd = 20190801
-# data_path = local path of data
-def file_downloader(url, data_path, ym, ymd, current_time, set_time):
-    url_full = url + '/' + ym + '/' + ymd + '/'
-    print('Start getting files from url', url_full)
-    request = requests.get(url_full)
+from os import makedirs
+
+def file_downloader(url, data_path):
+    print('=== Start getting files from url', url)
+    request = requests.get(url)
     webpage = html.fromstring(request.content)
+    file_list = webpage.xpath('//a[contains(@href, ".grb2")]//text()')
 
-    file_list = webpage.xpath('//a[contains(@href, "grb2")]//text()')
+    for file_name in file_list:
+        total_files = len(file_list)
+        download_url = url + file_name
+        print('== Start downloading file ' + str(file_list.index(file_name) + 1) + '/' + str(total_files), download_url)
 
-    for file in file_list:
-        if current_time == set_time:
-            total_files = len(file_list)
-            download_url = url_full + file
-            print('Start downloading file ' + str(file_list.index(file) + 1) + '/' + str(total_files), download_url)
+        # wget download and show the download progress bar
+        result = wget.download(download_url, data_path + file_name)
 
-            #wget download and show the download progress bar
+        if os.path.exists(data_path + file_name):
+            print('= Result:', result)
+        else:
+            print('= Download error: ', file_name)
 
-            result = wget.download(download_url, data_path + '/' + file)
 
-            print(' === Result:', result)
+def download_file(download_url, data_path, file_name):
+    if os.path.exists(data_path + file_name):
+        print('File exist, skipping')
+    else:
+        # wget download and show the download progress bar
+        print('Start downloading file', file_name)
+        result = wget.download(download_url, data_path + file_name)
+        return result
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
