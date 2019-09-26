@@ -19,7 +19,7 @@ def get_location_data(filename, data_path):
     for data in data_path:
         df = pd.read_csv('_'+ filename)
         dt = df[(df.Latitude >= 8.75) & (df.Latitude <= 23.25) & (df.Longitude >= 102.25) & (df.Longitude <= 115.25)]
-        for index, row in df:
+        for index, row in df.iterrows():
             if row not in dt :
                 print("Getting VietNam data")
                 df.drop(index, inplace = True)
