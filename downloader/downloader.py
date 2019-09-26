@@ -2,9 +2,7 @@ import requests
 from lxml import html
 import wget
 import os
-from datetime import timedelta, date
-import time
-from os import makedirs
+
 
 def file_downloader(url, data_path):
     print('=== Start getting files from url', url)
